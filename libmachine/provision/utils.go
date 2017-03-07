@@ -180,6 +180,14 @@ func ConfigureAuth(p Provisioner) error {
 	}
 
 	log.Info("Setting Docker configuration on the remote daemon...")
+	 // TODO: need a better way to do this.
+         // if storage-opt is set, need to clean graph folder
+        if strings.Contains(dkrcfg.EngineOptions, "--storage-opt") {
+	     if _, err := p.SSHCommand(`sudo mv /var/lib/docker /var/lib/docker.bk`); err != nil{
+		    return err
+	     }
+									                     log.Info("Storage option is resetted, graph folder is cleaned.")
+											}
 
 	if _, err = p.SSHCommand(fmt.Sprintf("printf %%s \"%s\" | sudo tee %s", dkrcfg.EngineOptions, dkrcfg.EngineOptionsPath)); err != nil {
 		return err

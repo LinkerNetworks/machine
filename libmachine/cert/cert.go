@@ -168,12 +168,13 @@ func (xcg *X509CertGenerator) GenerateCert(opts *Options) error {
 		template.KeyUsage = x509.KeyUsageDigitalSignature
 	} else { // server
 		template.ExtKeyUsage = []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}
-		if opts.SwarmMaster {
+		//xinxian0458: for enable setup swarm cluster manully
+		//if opts.SwarmMaster {
 			// Extend the Swarm master's server certificate
 			// permissions to also be able to connect to downstream
 			// nodes as a client.
 			template.ExtKeyUsage = append(template.ExtKeyUsage, x509.ExtKeyUsageClientAuth)
-		}
+		//}
 		for _, h := range opts.Hosts {
 			if ip := net.ParseIP(h); ip != nil {
 				template.IPAddresses = append(template.IPAddresses, ip)
@@ -257,7 +258,7 @@ func (xcg *X509CertGenerator) ValidateCertificate(addr string, authOptions *auth
 	}
 
 	dialer := &net.Dialer{
-		Timeout: time.Second * 20,
+		Timeout: time.Second * 60,
 	}
 
 	_, err = tls.DialWithDialer(dialer, "tcp", addr, tlsConfig)
